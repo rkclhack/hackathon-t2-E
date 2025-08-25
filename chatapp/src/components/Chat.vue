@@ -24,39 +24,39 @@ onMounted(() => {
 // #region browser event handler
 // 投稿メッセージをサーバに送信する
 const onPublish = () => {
-  socket.emit("publishEvent", `${userName.value} さん: ${chatContent.value}`);
+  socket.emit("publishEvent", {name: userName.value, content: chatContent.value});
   // 入力欄を初期化
   chatContent.value = "";
 }
 
 // 退室メッセージをサーバに送信する
 const onExit = () => {
-
+  socket.emit("exitEvent", { name: userName.value });
 }
 
 // メモを画面上に表示する
 const onMemo = () => {
   // メモの内容を表示
-
+  chatList.unshift(`${userName.value} さんのメモ: ${chatContent.value}`);
   // 入力欄を初期化
-
+  chatContent.value = "";
 }
 // #endregion
 
 // #region socket event handler
 // サーバから受信した入室メッセージ画面上に表示する
 const onReceiveEnter = (data) => {
-  chatList.push()
+  chatList.unshift(`${data.name} さんが入室しました`)
 }
 
 // サーバから受信した退室メッセージを受け取り画面上に表示する
 const onReceiveExit = (data) => {
-  chatList.push()
+  chatList.unshift(`${data.name} さんが退室しました`)
 }
 
 // サーバから受信した投稿メッセージを画面上に表示する
 const onReceivePublish = (data) => {
-  chatList.push(data)
+  chatList.unshift(`${data.name} さん : ${data.content}`)
 }
 // #endregion
 
@@ -65,12 +65,14 @@ const onReceivePublish = (data) => {
 const registerSocketEvent = () => {
   // 入室イベントを受け取ったら実行
   socket.on("enterEvent", (data) => {
-
+    if (!data) return;
+    onReceiveEnter(data);
   })
 
   // 退室イベントを受け取ったら実行
   socket.on("exitEvent", (data) => {
-
+    if (!data) return;
+    onReceiveExit(data);
   })
 
   // 投稿イベントを受け取ったら実行
@@ -90,7 +92,7 @@ const registerSocketEvent = () => {
       <textarea v-model="chatContent" variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area"></textarea>
       <div class="mt-5">
         <button class="button-normal" @click="onPublish">投稿</button>
-        <button class="button-normal util-ml-8px">メモ</button>
+        <button class="button-normal util-ml-8px" @click="onMemo">メモ</button>
       </div>
       <div class="mt-5" v-if="chatList.length !== 0">
         <ul>
