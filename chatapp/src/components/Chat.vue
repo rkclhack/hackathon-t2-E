@@ -4,10 +4,13 @@ import socketManager from '../socketManager.js'
 
 // #region global state
 const userName = inject("userName")
+const stuName = "山田太郎"
+const subject = "数学"
 // #endregion
 
 // #region local variable
 const socket = socketManager.getInstance()
+const printedKeys = new Set()
 // #endregion
 
 // #region reactive variable
@@ -24,7 +27,8 @@ onMounted(() => {
 // #region browser event handler
 // 投稿メッセージをサーバに送信する
 const onPublish = () => {
-  socket.emit("publishEvent", {name: userName.value, content: chatContent.value});
+  socket.emit("publishEvent_save", {name: userName.value, stuName: stuName.value, subject: subject.value, content: chatContent.value});
+  socket.emit("publishEvent_send", {stuName: stuName.value, subject: subject.value});
   // 入力欄を初期化
   chatContent.value = "";
 }
@@ -56,7 +60,21 @@ const onReceiveExit = (data) => {
 
 // サーバから受信した投稿メッセージを画面上に表示する
 const onReceivePublish = (data) => {
-  chatList.unshift(`${data.name} さん : ${data.content}`)
+  const messages = Array.isArray(data) ? data : [data];
+  
+  messages.sort((a, b) => (a?.time ?? 0) - (b?.time ?? 0));
+  
+  for (const message of messages) {
+    const name = message?.name ?? "";
+    const content = message?.content ?? "";
+    const time = message?.time ?? 0;
+    
+    const k = `${time}|${name}|${content}`;
+    if (printedKeys.has(k)) continue;
+    
+    chatList.unshift(`${name} さん : ${content}`)
+    printedKeys.add(k);
+  }
 }
 // #endregion
 
@@ -67,6 +85,7 @@ const registerSocketEvent = () => {
   socket.on("enterEvent", (data) => {
     if (!data) return;
     onReceiveEnter(data);
+    socket.emit("publishEvent_send", {stuName: stuName.value, subject: subject.value});
   })
 
   // 退室イベントを受け取ったら実行
@@ -76,7 +95,7 @@ const registerSocketEvent = () => {
   })
 
   // 投稿イベントを受け取ったら実行
-  socket.on("publishEvent", (data) => {
+  socket.on("publishEvent_send", (data) => {
   if (!data) return;
   onReceivePublish(data);
   })
