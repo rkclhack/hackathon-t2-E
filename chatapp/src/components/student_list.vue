@@ -1,23 +1,24 @@
 <script setup>
 import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
+import { mockUsers } from "../../data/mockStudents";
 
 // state
-const studentName = inject("studentName");
+const activeStudent = inject("activeStudent");
 const activeTab = ref("p1");
 
 const tabs = [
-  { id: "p1", label: "中学一年生", description: "馬場 浩稀" },
-  { id: "p2", label: "中学二年生", description: "佐藤 太郎" },
-  { id: "p3", label: "中学三年生", description: "鈴木 花子" },
-  { id: "p4", label: "高校一年生", description: "高橋 健" },
-  { id: "p5", label: "高校二年生", description: "田中 美咲" },
-  { id: "p6", label: "高校三年生", description: "伊藤 翔" },
+  { id: "p1", label: "中学一年生" },
+  { id: "p2", label: "中学二年生" },
+  { id: "p3", label: "中学三年生" },
+  { id: "p4", label: "高校一年生" },
+  { id: "p5", label: "高校二年生" },
+  { id: "p6", label: "高校三年生" },
 ];
 
 const router = useRouter();
-const handleSelectStudent = (tab) => {
-  studentName.value = tab.description;
+const handleSelectStudent = (student) => {
+  Object.assign(activeStudent, student);
   router.push({ name: "chat" });
 };
 </script>
@@ -42,13 +43,15 @@ const handleSelectStudent = (tab) => {
       class="content"
       v-show="activeTab === tab.id"
     >
-      <span
+      <div
+        v-for="student in mockUsers[tab.label]"
         class="student-name"
-        @click="handleSelectStudent(tab)"
+        @click="handleSelectStudent(student)"
         style="cursor: pointer; text-decoration: underline"
       >
-        {{ tab.description }}
-      </span>
+        <div>{{ student.name }}</div>
+        <div v-for="subject in student.subject">{{ subject }}</div>
+      </div>
     </section>
 
     <router-link to="/" class="link">
