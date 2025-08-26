@@ -58,99 +58,156 @@ const handleChangeSubject = (newSubject) => {
 </script>
 
 <template>
-  <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">
-      {{ activeStudent.name }} さんのチャット
-    </h1>
-    <div class="mt-2">
-      <p>ログインユーザ：{{ teacherName }}さん</p>
+  <div class="container">
+    <!-- header -->
+    <div class="header">
+      <div class="header-content">
+        <h1 class="header-title">{{ activeStudent.name }} さん</h1>
 
-      <div
-        v-for="subject in activeStudent.subject"
-        :key="subject"
-        class="util-ml-8px"
-      >
+        <router-link to="/student_list" class="link">
+          <button type="button" class="back-button" @click="handleExitRoom">
+            生徒一覧へ戻る
+          </button>
+        </router-link>
+      </div>
+      <!-- 科目選択 -->
+      <div class="subject-select">
         <button
+          v-for="subject in activeStudent.subject"
+          :key="subject"
           @click="handleChangeSubject(subject)"
           :class="{ 'active-subject': activeSubject === subject }"
         >
           {{ subject }}
         </button>
       </div>
+    </div>
 
-      <!-- ▼ チャットログを上に配置 ▼ -->
-      <div class="chat-container mt-3" v-if="chatList.length">
-        <div class="scroll-region">
-          <ul>
-            <li class="item mt-2" v-for="(chat, i) in chatList" :key="i">
-              {{ `${chat.name}: ${chat.content}` }}
-            </li>
-          </ul>
+    <!-- チャットログ -->
+    <div class="chat-container">
+      <div class="scroll-region">
+        <div
+          v-for="(chat, i) in chatList"
+          :key="i"
+          class="chat-item"
+          :class="chat.name === teacherName ? 'mine' : 'other'"
+        >
+          <div class="chat-name">{{ chat.name }}</div>
+          <div class="chat-content">{{ chat.content }}</div>
         </div>
-      </div>
-
-      <!-- ▼ 入力欄と操作ボタン ▼ -->
-      <textarea
-        v-model="chatContent"
-        placeholder="投稿文を入力してください"
-        rows="4"
-        class="area"
-      ></textarea>
-      <div class="mt-2">
-        <button class="button-normal" @click="handleSendChat">投稿</button>
       </div>
     </div>
 
-    <router-link to="/student_list" class="link">
-      <button
-        type="button"
-        class="button-normal button-exit"
-        @click="handleExitRoom"
-      >
-        生徒一覧へ戻る
-      </button>
-    </router-link>
+    <!-- 入力エリア -->
+    <div class="input-area">
+      <textarea
+        v-model="chatContent"
+        placeholder="記録・引き継ぎ内容を入力してください"
+        rows="2"
+        class="text-input"
+      ></textarea>
+      <button class="send-button" @click="handleSendChat">投稿</button>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.link {
-  text-decoration: none;
+button {
+  padding: 8px 16px;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  background-color: #eee;
+  color: black;
 }
 
-.area {
-  width: 80vw;
-  border: 1px solid #000;
-  margin-top: 8px;
+button:hover {
+  filter: brightness(0.8);
 }
 
-.item {
-  display: block;
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100dvh;
 }
 
-.util-ml-8px {
-  margin-left: 8px;
+.header {
+  border-bottom: 1px solid #ccc;
+  padding: 16px;
 }
 
-.button-exit {
-  color: #000;
-  margin-top: 8px;
+.header-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
-/* ▼ チャットログ領域を固定してスクロール可能にする ▼ */
+.header-title {
+  font-size: 2rem;
+  font-weight: bold;
+  flex: 1;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.subject-select {
+  display: flex;
+  gap: 8px;
+}
+
 .chat-container {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-height: 200px;
+  display: block;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
 }
 
 .scroll-region {
-  max-height: 300px; /* ログの高さを制限 */
-  overflow-y: auto; /* 縦スクロール有効 */
-  padding: 0.5rem;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: scroll;
+  white-space: pre-wrap;
+  padding: 16px 32px;
+}
+
+.chat-name {
+  font-weight: bold;
+}
+
+.chat-content {
+  background-color: #eee;
+  padding: 16px;
+  border-radius: 8px;
+  width: fit-content;
+  max-width: 70%;
+  word-break: break-word;
+}
+
+.input-area {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border-top: 1px solid #ccc;
+  padding: 16px;
+}
+
+.text-input {
+  flex: 1;
+  display: block;
+  width: 100%;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  padding: 8px;
 }
 
 .active-subject {
-  background-color: #d0d7e2;
+  background-color: orange;
+  color: white;
 }
 </style>
