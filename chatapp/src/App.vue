@@ -1,18 +1,15 @@
 <script setup>
-import { provide, ref } from "vue"
+import { provide, ref } from "vue";
 
-// #region reactive state
-const userName = ref("")
-// #endregion
+const teacherName = ref("");
+const studentName = ref("");
 
-// #region global variable
-provide("userName", userName)
-// #endregion
+provide("teacherName", teacherName);
+provide("studentName", studentName);
 </script>
 
 <template>
   <router-view />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

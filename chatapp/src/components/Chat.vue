@@ -1,107 +1,99 @@
 <script setup>
-import { inject, ref, reactive, onMounted } from "vue"
-import socketManager from '../socketManager.js'
+import { inject, ref, reactive, onMounted } from "vue";
+import socketManager from "../socketManager.js";
 
-// #region global state
-const userName = inject("userName")
-// #endregion
+// state
+const teacherName = inject("teacherName");
+const studentName = inject("studentName");
+const subject = ref("数学");
+const chatContent = ref("");
+const chatList = reactive([]);
 
-// #region local variable
-const socket = socketManager.getInstance()
-// #endregion
+// client socket
+const socket = socketManager.getInstance();
 
-// #region reactive variable
-const chatContent = ref("")
-const chatList = reactive([])
-// #endregion
-
-// #region lifecycle
+// lifecycle
 onMounted(() => {
-  registerSocketEvent()
-})
-// #endregion
+  const registerSocketEvent = () => {
+    socket.on("updateChatEvent", (data) => {
+      if (!data) return;
+      chatList.splice(0, chatList.length, ...(Array.isArray(data) ? data : []));
+    });
+  };
 
-// #region browser event handler
-// 投稿メッセージをサーバに送信する
-const onPublish = () => {
-  socket.emit("publishEvent", {name: userName.value, content: chatContent.value});
-  // 入力欄を初期化
+  registerSocketEvent();
+  handleEnterRoom();
+});
+
+// methods
+const handleSendChat = () => {
+  socket.emit("sendChatEvent", {
+    userName: teacherName.value,
+    studentName: studentName.value,
+    subject: subject.value,
+    content: chatContent.value,
+  });
   chatContent.value = "";
-}
+};
 
-// 退室メッセージをサーバに送信する
-const onExit = () => {
-  socket.emit("exitEvent", { name: userName.value });
-}
+const handleEnterRoom = () => {
+  socket.emit("enterRoomEvent", {
+    studentName: studentName.value,
+    subject: subject.value,
+  });
+};
 
-// メモを画面上に表示する
-const onMemo = () => {
-  // メモの内容を表示
-  chatList.unshift(`${userName.value} さんのメモ: ${chatContent.value}`);
-  // 入力欄を初期化
-  chatContent.value = "";
-}
-// #endregion
+const handleExitRoom = () => {
+  socket.emit("exitRoomEvent", {
+    studentName: studentName.value,
+    subject: subject.value,
+  });
+};
 
-// #region socket event handler
-// サーバから受信した入室メッセージ画面上に表示する
-const onReceiveEnter = (data) => {
-  chatList.unshift(`${data.name} さんが入室しました`)
-}
-
-// サーバから受信した退室メッセージを受け取り画面上に表示する
-const onReceiveExit = (data) => {
-  chatList.unshift(`${data.name} さんが退室しました`)
-}
-
-// サーバから受信した投稿メッセージを画面上に表示する
-const onReceivePublish = (data) => {
-  chatList.unshift(`${data.name} さん : ${data.content}`)
-}
-// #endregion
-
-// #region local methods
-// イベント登録をまとめる
-const registerSocketEvent = () => {
-  // 入室イベントを受け取ったら実行
-  socket.on("enterEvent", (data) => {
-    if (!data) return;
-    onReceiveEnter(data);
-  })
-
-  // 退室イベントを受け取ったら実行
-  socket.on("exitEvent", (data) => {
-    if (!data) return;
-    onReceiveExit(data);
-  })
-
-  // 投稿イベントを受け取ったら実行
-  socket.on("publishEvent", (data) => {
-  if (!data) return;
-  onReceivePublish(data);
-  })
-}
-// #endregion
+const handleChangeSubject = (newSubject) => {
+  handleExitRoom();
+  subject.value = newSubject;
+  handleEnterRoom();
+};
 </script>
 
 <template>
   <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">Vue.js Chat チャットルーム</h1>
-    <div class="mt-10">
-      <p>ログインユーザ：{{ userName }}さん</p>
-      <textarea v-model="chatContent" variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area"></textarea>
-      <div class="mt-5">
-        <button class="button-normal" @click="onPublish">投稿</button>
-        <button class="button-normal util-ml-8px" @click="onMemo">メモ</button>
+    <h1 class="text-h3 font-weight-medium">{{ studentName }} さんのチャット</h1>
+    <div class="mt-2">
+      <p>ログインユーザ：{{ teacherName }}さん</p>
+
+      <!-- ▼ チャットログを上に配置 ▼ -->
+      <div class="chat-container mt-3" v-if="chatList.length">
+        <div class="scroll-region">
+          <ul>
+            <li class="item mt-2" v-for="(chat, i) in chatList" :key="i">
+              {{ `${chat.name}: ${chat.content}` }}
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="mt-5" v-if="chatList.length !== 0">
-        <ul>
-          <li class="item mt-4" v-for="(chat, i) in chatList" :key="i">{{ chat }}</li>
-        </ul>
+
+      <!-- ▼ 入力欄と操作ボタン ▼ -->
+      <textarea
+        v-model="chatContent"
+        placeholder="投稿文を入力してください"
+        rows="4"
+        class="area"
+      ></textarea>
+      <div class="mt-2">
+        <button class="button-normal" @click="handleSendChat">投稿</button>
       </div>
     </div>
-    <router-link to="/" class="link">
-      <button type="button" class="button-normal button-exit" @click="onExit">退室する</button>
+
+    <router-link to="/student_list" class="link">
+      <button
+        type="button"
+        class="button-normal button-exit"
+        @click="handleExitRoom"
+      >
+        生徒一覧へ戻る
+      </button>
     </router-link>
   </div>
 </template>
@@ -112,7 +104,7 @@ const registerSocketEvent = () => {
 }
 
 .area {
-  width: 500px;
+  width: 80vw;
   border: 1px solid #000;
   margin-top: 8px;
 }
@@ -128,5 +120,18 @@ const registerSocketEvent = () => {
 .button-exit {
   color: #000;
   margin-top: 8px;
+}
+
+/* ▼ チャットログ領域を固定してスクロール可能にする ▼ */
+.chat-container {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-height: 200px;
+}
+
+.scroll-region {
+  max-height: 300px; /* ログの高さを制限 */
+  overflow-y: auto; /* 縦スクロール有効 */
+  padding: 0.5rem;
 }
 </style>

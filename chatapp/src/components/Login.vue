@@ -1,19 +1,17 @@
 <script setup>
-import { inject, ref } from "vue"
-import { useRouter } from "vue-router"
-import socketManager from '../socketManager.js'
+import { inject, ref } from "vue";
+import { useRouter } from "vue-router";
 
 // #region global state
-const userName = inject("userName")
+const teacherName = inject("teacherName");
 // #endregion
 
 // #region local variable
-const router = useRouter()
-const socket = socketManager.getInstance()
+const router = useRouter();
 // #endregion
 
 // #region reactive variable
-const inputUserName = ref("")
+const inputUserName = ref("");
 // #endregion
 
 // #region browser event handler
@@ -21,19 +19,13 @@ const inputUserName = ref("")
 const onEnter = () => {
   // ユーザー名が入力されているかチェック
   if (!inputUserName.value.trim()) {
-    alert("ユーザー名を入力してください")
-    return
+    alert("ユーザー名を入力してください");
+    return;
   }
-
-  // 入室メッセージを送信
-  userName.value = inputUserName.value
-  
-  // 全体で使用するnameに入力されたユーザー名を格納
-  socket.emit("enterEvent", { name: userName.value })
-
-  // チャット画面へ遷移
-  router.push({ name: "chat" })
-}
+  teacherName.value = inputUserName.value;
+  // 生徒一覧画面へ遷移
+  router.push({ name: "student_list" });
+};
 // #endregion
 </script>
 
@@ -44,7 +36,9 @@ const onEnter = () => {
       <p>ユーザー名</p>
       <input type="text" class="user-name-text" v-model="inputUserName" />
     </div>
-    <button type="button" @click="onEnter" class="button-normal">入室する</button>
+    <button type="button" @click="onEnter" class="button-normal">
+      入室する
+    </button>
   </div>
 </template>
 
