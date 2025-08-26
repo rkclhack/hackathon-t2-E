@@ -2,7 +2,6 @@
 import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
 import { mockUsers } from "../../data/mockStudents";
-import { userIcon } from "../images/user-solid.svg";
 
 // state
 const activeStudent = inject("activeStudent");
@@ -56,13 +55,20 @@ const handleSelectStudent = (student) => {
         v-for="student in mockUsers[tab.label]"
         class="student"
         @click="handleSelectStudent(student)"
-        style="cursor: pointer; text-decoration: underline"
-      > <img :src="userIcon" class="student-icon">
-        <div class="student-name">{{ student.name }}</div>
-        <span 
-          v-for="subject in student.subject"
-          class="subject-name"
-        >{{ subject }}</span>
+        style="cursor: pointer;"
+      > 
+        <div class="student-row">
+          <img src="../images/user-solid.svg" class="student-icon">
+          <div class="student-column">
+            <span class="student-name">{{ student.name }}</span>
+            <div>
+              <span 
+                v-for="subject in student.subject"
+                class="subject-name"
+              >{{ subject }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -74,7 +80,7 @@ const handleSelectStudent = (student) => {
 }
 .button-exit{
   padding: 2% 3.5%;
-  border-radius:6%;
+  border-radius:10px;
   background: #f48356;
   color: #fff;
   font-weight: 700;
@@ -116,13 +122,29 @@ const handleSelectStudent = (student) => {
   padding: 10px;
 }
 
+.student:last-child {
+  border-bottom: none;
+}
+
+.student:hover {
+  background-color: #ffa60060;
+}
+
+.student-row {
+  display: flex;
+  align-items: center;
+  gap: 3%;
+}
+
+.student-column {
+  display: flex;
+  flex-direction: column;
+  gap:2%;
+}
+
 .student-icon {
   margin:2px;
   width: 20px;
-}
-
-.student-name:hover {
-  color: orange;
 }
 
 .subject-name {
