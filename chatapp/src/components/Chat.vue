@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref, reactive, onMounted } from "vue";
+import { inject, ref, reactive, onMounted, nextTick } from "vue";
 import socketManager from "../socketManager.js";
 
 // state
@@ -12,12 +12,27 @@ const chatList = reactive([]);
 // client socket
 const socket = socketManager.getInstance();
 
+// チャットリスト更新時にスクロールする
+const scrollRegionRef = ref(null);
+const scrollToBottom = () => {
+  nextTick(() => {
+    const el = scrollRegionRef.value;
+    if (el) {
+      el.scrollTo({
+        top: el.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  });
+};
+
 // lifecycle
 onMounted(() => {
   const registerSocketEvent = () => {
     socket.on("updateChatEvent", (data) => {
       if (!data) return;
       chatList.splice(0, chatList.length, ...(Array.isArray(data) ? data : []));
+      scrollToBottom();
     });
   };
 
@@ -27,6 +42,7 @@ onMounted(() => {
 
 // methods
 const handleSendChat = () => {
+  if (!chatContent.value.trim()) return;
   socket.emit("sendChatEvent", {
     userName: teacherName.value,
     studentName: activeStudent.name,
@@ -85,7 +101,7 @@ const handleChangeSubject = (newSubject) => {
 
     <!-- チャットログ -->
     <div class="chat-container">
-      <div class="scroll-region">
+      <div class="scroll-region" ref="scrollRegionRef">
         <div
           v-for="(chat, i) in chatList"
           :key="i"
@@ -118,10 +134,6 @@ button {
   border-radius: 8px;
   background-color: #eee;
   color: black;
-}
-
-button:hover {
-  filter: brightness(0.8);
 }
 
 .container {
