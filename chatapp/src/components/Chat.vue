@@ -4,8 +4,8 @@ import socketManager from '../socketManager.js'
 
 // #region global state
 const userName = inject("userName")
-const stuName = "山田太郎"
-const subject = "数学"
+const stuName = ref("山田太郎")
+const subject = ref("数学")
 // #endregion
 
 // #region local variable
@@ -25,6 +25,14 @@ onMounted(() => {
 // #endregion
 
 // #region browser event handler
+
+// 選択した教科に切り替える
+const onChangeSubject = (selectSubject) =>{
+  subject.value = selectSubject;
+  printedKeys.clear()
+  chatList.splice(0)
+  socket.emit("publishEvent_send", {stuName: stuName.value, subject: subject.value});
+}
 // 投稿メッセージをサーバに送信する
 const onPublish = () => {
   socket.emit("publishEvent_save", {name: userName.value, stuName: stuName.value, subject: subject.value, content: chatContent.value});
@@ -48,10 +56,6 @@ const onMemo = () => {
 // #endregion
 
 // #region socket event handler
-// サーバから受信した入室メッセージ画面上に表示する
-const onReceiveEnter = (data) => {
-  chatList.unshift(`${data.name} さんが入室しました`)
-}
 
 // サーバから受信した退室メッセージを受け取り画面上に表示する
 const onReceiveExit = (data) => {
@@ -84,7 +88,6 @@ const registerSocketEvent = () => {
   // 入室イベントを受け取ったら実行
   socket.on("enterEvent", (data) => {
     if (!data) return;
-    onReceiveEnter(data);
     socket.emit("publishEvent_send", {stuName: stuName.value, subject: subject.value});
   })
 
@@ -109,6 +112,10 @@ const registerSocketEvent = () => {
     <div class="mt-10">
       <p>ログインユーザ：{{ userName }}さん</p>
       <textarea v-model="chatContent" variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area"></textarea>
+      <div class="mt-5">
+        <button class="button-normal mr-2" :class="{ 'action': subject === '数学' }" @click="onChangeSubject('数学')">数学</button>
+        <button class="button-normal" :class="{ 'action': subject === '国語' }" @click="onChangeSubject('国語')">国語</button>
+      </div>
       <div class="mt-5">
         <button class="button-normal" @click="onPublish">投稿</button>
         <button class="button-normal util-ml-8px" @click="onMemo">メモ</button>
@@ -147,5 +154,9 @@ const registerSocketEvent = () => {
 .button-exit {
   color: #000;
   margin-top: 8px;
+}
+
+.action {
+  border: 2px solid blue;
 }
 </style>

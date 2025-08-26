@@ -5,7 +5,7 @@ export default (io, socket) => {
 
   // 入室メッセージをクライアントに送信する
   socket.on("enterEvent", (data) => {
-    socket.broadcast.emit("enterEvent", data)
+    socket.emit("enterEvent", data)
   })
 
   // 退室メッセージをクライアントに送信する
@@ -17,6 +17,8 @@ export default (io, socket) => {
   socket.on("publishEvent_save", (data) => {
     const {name, stuName, subject, content} = data ?? {};
     const key = `${stuName}-${subject}`;
+
+
 
     if (!chatDict[key]) {
       chatDict[key] = []
@@ -31,9 +33,17 @@ export default (io, socket) => {
   // 投稿メッセージを送信する
   socket.on("publishEvent_send", (data) => {
     const key = `${data.stuName}-${data.subject}`;
+
+    if (socket.currentRoom) {
+      socket.leave(socket.currentRoom);
+    }
+
+    socket.join(key)
+    socket.currentRoom = key;
+
     if (!chatDict[key]) {
       return
     }
-    io.sockets.emit("publishEvent_send", chatDict[key])
+    io.to(key).emit("publishEvent_send", chatDict[key])
   })
 }
