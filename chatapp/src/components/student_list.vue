@@ -1,27 +1,26 @@
 <script setup>
 import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
+import { mockUsers } from "../../data/mockStudents";
 
 // state
-const studentName = inject("studentName");
+const activeStudent = inject("activeStudent");
 const activeTab = ref("p1");
 
 const tabs = [
-  { id: "p1", label: "中一", description: "馬場 浩稀" , subject: ["国語", "数学"]},
-  { id: "p1", label: "中一", description: "日本 太郎" , subject: ["数学", "理科", "英語"]},
-  { id: "p1", label: "中一", description: "東京 太郎" , subject: ["国語", "数学"]},
-  { id: "p2", label: "中二", description: "佐藤 太郎" , subject: ["国語", "数学"]},
-  { id: "p3", label: "中三", description: "鈴木 花子" , subject: ["国語", "数学"]},
-  { id: "p4", label: "高一", description: "高橋 健" , subject: ["国語", "数学"]},
-  { id: "p5", label: "高二", description: "田中 美咲" , subject: ["国語", "数学"]},
-  { id: "p6", label: "高三", description: "伊藤 翔" , subject: ["国語", "数学"]},
+  { id: "p1", label: "中学一年生" },
+  { id: "p2", label: "中学二年生" },
+  { id: "p3", label: "中学三年生" },
+  { id: "p4", label: "高校一年生" },
+  { id: "p5", label: "高校二年生" },
+  { id: "p6", label: "高校三年生" },
 ];
 
 const tabLabel = ["中一", "中二", "中三", "高一", "高二", "高三"]
 
 const router = useRouter();
-const handleSelectStudent = (tab) => {
-  studentName.value = tab.description;
+const handleSelectStudent = (student) => {
+  Object.assign(activeStudent, student);
   router.push({ name: "chat" });
 };
 </script>
@@ -65,15 +64,14 @@ const handleSelectStudent = (tab) => {
       v-show="activeTab === tab.id"
     >
       <div
+        v-for="student in mockUsers[tab.label]"
         class="student-name"
-        @click="handleSelectStudent(tab)"
+        @click="handleSelectStudent(student)"
         style="cursor: pointer; text-decoration: underline"
       >
-        {{ tab.description }}
+        <div>{{ student.name }}</div>
+        <div v-for="subject in student.subject">{{ subject }}</div>
       </div>
-      <span v-for="sub in tab.subject">
-        <span class="subject-name">{{sub}}</span>
-      </span>
     </section>
   </div>
 </template>

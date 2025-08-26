@@ -1,5 +1,5 @@
 // チャットの内容を辞書形式で保存
-const chatDict = {};
+const chatDict = require("./DemoData_chat.json");
 
 const getKey = (data) => `${data.studentName}-${data.subject}`;
 

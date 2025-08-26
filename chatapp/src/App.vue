@@ -1,11 +1,11 @@
 <script setup>
-import { provide, ref } from "vue";
+import { provide, reactive, ref } from "vue";
 
 const teacherName = ref("");
-const studentName = ref("");
+const activeStudent = reactive({ name: "", subject: "" });
 
 provide("teacherName", teacherName);
-provide("studentName", studentName);
+provide("activeStudent", activeStudent);
 </script>
 
 <template>

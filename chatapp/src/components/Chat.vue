@@ -4,8 +4,8 @@ import socketManager from "../socketManager.js";
 
 // state
 const teacherName = inject("teacherName");
-const studentName = inject("studentName");
-const subject = ref("数学");
+const activeStudent = inject("activeStudent");
+const activeSubject = ref(activeStudent.subject[0]);
 const chatContent = ref("");
 const chatList = reactive([]);
 
@@ -29,8 +29,8 @@ onMounted(() => {
 const handleSendChat = () => {
   socket.emit("sendChatEvent", {
     userName: teacherName.value,
-    studentName: studentName.value,
-    subject: subject.value,
+    studentName: activeStudent.name,
+    subject: activeSubject.value,
     content: chatContent.value,
   });
   chatContent.value = "";
@@ -38,30 +38,45 @@ const handleSendChat = () => {
 
 const handleEnterRoom = () => {
   socket.emit("enterRoomEvent", {
-    studentName: studentName.value,
-    subject: subject.value,
+    studentName: activeStudent.name,
+    subject: activeSubject.value,
   });
 };
 
 const handleExitRoom = () => {
   socket.emit("exitRoomEvent", {
-    studentName: studentName.value,
-    subject: subject.value,
+    studentName: activeStudent.name,
+    subject: activeSubject.value,
   });
 };
 
 const handleChangeSubject = (newSubject) => {
   handleExitRoom();
-  subject.value = newSubject;
+  activeSubject.value = newSubject;
   handleEnterRoom();
 };
 </script>
 
 <template>
   <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">{{ studentName }} さんのチャット</h1>
+    <h1 class="text-h3 font-weight-medium">
+      {{ activeStudent.name }} さんのチャット
+    </h1>
     <div class="mt-2">
       <p>ログインユーザ：{{ teacherName }}さん</p>
+
+      <div
+        v-for="subject in activeStudent.subject"
+        :key="subject"
+        class="util-ml-8px"
+      >
+        <button
+          @click="handleChangeSubject(subject)"
+          :class="{ 'active-subject': activeSubject === subject }"
+        >
+          {{ subject }}
+        </button>
+      </div>
 
       <!-- ▼ チャットログを上に配置 ▼ -->
       <div class="chat-container mt-3" v-if="chatList.length">
@@ -133,5 +148,9 @@ const handleChangeSubject = (newSubject) => {
   max-height: 300px; /* ログの高さを制限 */
   overflow-y: auto; /* 縦スクロール有効 */
   padding: 0.5rem;
+}
+
+.active-subject {
+  background-color: #d0d7e2;
 }
 </style>
