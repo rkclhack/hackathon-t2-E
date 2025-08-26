@@ -35,7 +35,7 @@ const onEnter = () => {
 <template>
   <div class="chat-container">
     <div class="content-wrapper">
-<h1 class="main-title">塾 L<span :style="{ color: 'orange' }">!</span>nk</h1>
+      <h1 class="main-title">塾 L<span :style="{ color: 'orange' }">!</span>nk</h1>
       <div class="input-group">
         <p class="label">ユーザー名</p>
         <input type="text" class="input-text" v-model="inputUserName" placeholder="名前を入力してください" />
