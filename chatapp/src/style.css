@@ -1,5 +1,4 @@
 body {
-  padding: 2em;
 }
 
 .button-normal {
@@ -7,4 +6,4 @@ body {
   background-color: #eee;
   border-radius: 4px;
   padding: 4px;
-}
+}white-space: pre-wrap; /* テキストの折り返しを有効にする */
