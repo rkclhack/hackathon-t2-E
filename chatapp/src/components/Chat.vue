@@ -116,11 +116,12 @@ button {
   padding: 8px 16px;
   border: 1px solid #aaa;
   border-radius: 8px;
+  background-color: #eee;
   color: black;
 }
 
 button:hover {
-  filter: brightness(0.9);
+  filter: brightness(0.8);
 }
 
 .container {
@@ -137,6 +138,7 @@ button:hover {
 
 .header-content {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
@@ -146,6 +148,8 @@ button:hover {
   font-size: 2rem;
   font-weight: bold;
   flex: 1;
+  white-space: nowrap;
+  text-align: center;
 }
 
 .subject-select {
