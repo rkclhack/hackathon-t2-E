@@ -61,14 +61,15 @@ const handleChangeSubject = (newSubject) => {
   <div class="container">
     <!-- header -->
     <div class="header">
-      <h1 class="text-h3 font-weight-medium">{{ activeStudent.name }} さん</h1>
+      <div class="header-content">
+        <h1 class="header-title">{{ activeStudent.name }} さん</h1>
 
-      <router-link to="/student_list" class="link">
-        <button type="button" class="back-list" @click="handleExitRoom">
-          生徒一覧へ戻る
-        </button>
-      </router-link>
-
+        <router-link to="/student_list" class="link">
+          <button type="button" class="back-button" @click="handleExitRoom">
+            生徒一覧へ戻る
+          </button>
+        </router-link>
+      </div>
       <!-- 科目選択 -->
       <div class="subject-select">
         <button
@@ -111,18 +112,49 @@ const handleChangeSubject = (newSubject) => {
 </template>
 
 <style scoped>
+button {
+  padding: 8px 16px;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  color: black;
+}
+
+button:hover {
+  filter: brightness(0.9);
+}
+
 .container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 100dvh;
-  padding: 16px;
 }
 
 .header {
+  border-bottom: 1px solid #ccc;
+  padding: 16px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.header-title {
+  font-size: 2rem;
+  font-weight: bold;
+  flex: 1;
+}
+
+.subject-select {
+  display: flex;
+  gap: 8px;
 }
 
 .chat-container {
+  display: block;
   flex: 1;
   position: relative;
   overflow: hidden;
@@ -134,15 +166,9 @@ const handleChangeSubject = (newSubject) => {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  border: 1px solid red;
-}
-
-.chat-item {
-  border: 1px solid blue;
-  padding: 8px;
-  margin-left: 24px;
-  margin-right: 24px;
-  border-radius: 12px;
+  overflow-y: scroll;
+  white-space: pre-wrap;
+  padding: 16px 32px;
 }
 
 .chat-name {
@@ -150,53 +176,34 @@ const handleChangeSubject = (newSubject) => {
 }
 
 .chat-content {
-  border: 1px solid black;
+  background-color: #eee;
+  padding: 16px;
   border-radius: 8px;
-  padding: 4px 8px;
+  width: fit-content;
+  max-width: 70%;
+  word-break: break-word;
 }
 
 .input-area {
   width: 100%;
   display: flex;
+  gap: 8px;
   align-items: center;
+  border-top: 1px solid #ccc;
+  padding: 16px;
 }
 
 .text-input {
   flex: 1;
   display: block;
   width: 100%;
-  border: 1px solid black;
-}
-
-.send-button {
-  display: block;
-  padding: 8px 16px;
-  border: 1px solid black;
-}
-
-.link {
-  color: blue;
-  text-decoration: underline;
-}
-
-.text-h3 {
-  font-size: 1.1rem;
-  font-weight: bold;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  padding: 8px;
 }
 
 .active-subject {
-  padding: 8px 16px;
-  margin-right: 24px;
-}
-
-.scroll-region {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  border: 1px solid red;
-  overflow-y: scroll;
-  white-space: pre-wrap; /* テキストの折り返しを有効にする */
+  background-color: orange;
+  color: white;
 }
 </style>
