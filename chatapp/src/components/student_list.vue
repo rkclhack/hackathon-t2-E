@@ -1,23 +1,25 @@
 <script setup>
-import { ref } from "vue"
-import { useRouter } from "vue-router"
+import { inject, ref } from "vue";
+import { useRouter } from "vue-router";
 
-const router = useRouter()
-const activeTab = ref('p1')
+// state
+const studentName = inject("studentName");
+const activeTab = ref("p1");
 
 const tabs = [
-    { id: 'p1', label: '中学一年生', description: '馬場 浩稀' },
-    { id: 'p2', label: '中学二年生', description: '佐藤 太郎' },
-    { id: 'p3', label: '中学三年生', description: '鈴木 花子' },
-    { id: 'p4', label: '高校一年生', description: '高橋 健' },
-    { id: 'p5', label: '高校二年生', description: '田中 美咲' },
-    { id: 'p6', label: '高校三年生', description: '伊藤 翔' },
-]
+  { id: "p1", label: "中学一年生", description: "馬場 浩稀" },
+  { id: "p2", label: "中学二年生", description: "佐藤 太郎" },
+  { id: "p3", label: "中学三年生", description: "鈴木 花子" },
+  { id: "p4", label: "高校一年生", description: "高橋 健" },
+  { id: "p5", label: "高校二年生", description: "田中 美咲" },
+  { id: "p6", label: "高校三年生", description: "伊藤 翔" },
+];
 
-function goToChat(tab) {
-    // chat へ名前を query で渡す
-    router.push({ name: "chat", query: { name: tab.description } })
-}
+const router = useRouter();
+const handleSelectStudent = (tab) => {
+  studentName.value = tab.description;
+  router.push({ name: "chat" });
+};
 </script>
 
 <template>
@@ -28,7 +30,8 @@ function goToChat(tab) {
           href="#"
           :class="{ active: activeTab === tab.id }"
           @click.prevent="activeTab = tab.id"
-        >{{ tab.label }}</a>
+          >{{ tab.label }}</a
+        >
       </li>
     </ul>
 
@@ -41,12 +44,18 @@ function goToChat(tab) {
     >
       <span
         class="student-name"
-        @click="goToChat(tab)"
-        style="cursor:pointer; text-decoration:underline;"
+        @click="handleSelectStudent(tab)"
+        style="cursor: pointer; text-decoration: underline"
       >
         {{ tab.description }}
       </span>
     </section>
+
+    <router-link to="/" class="link">
+      <button type="button" class="button-normal button-exit">
+        ログアウト
+      </button>
+    </router-link>
   </div>
 </template>
 

@@ -28,7 +28,7 @@ onMounted(() => {
 // methods
 const handleSendChat = () => {
   socket.emit("sendChatEvent", {
-    userName: userName.value,
+    userName: teacherName.value,
     studentName: studentName.value,
     subject: subject.value,
     content: chatContent.value,
@@ -68,7 +68,7 @@ const handleChangeSubject = (newSubject) => {
         <div class="scroll-region">
           <ul>
             <li class="item mt-2" v-for="(chat, i) in chatList" :key="i">
-              {{ chat }}
+              {{ `${chat.name}: ${chat.content}` }}
             </li>
           </ul>
         </div>
@@ -86,13 +86,13 @@ const handleChangeSubject = (newSubject) => {
       </div>
     </div>
 
-    <router-link to="/" class="link">
+    <router-link to="/student_list" class="link">
       <button
         type="button"
         class="button-normal button-exit"
         @click="handleExitRoom"
       >
-        退室する
+        生徒一覧へ戻る
       </button>
     </router-link>
   </div>
