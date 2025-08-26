@@ -2,21 +2,20 @@
 import { inject, ref } from "vue";
 import { useRouter } from "vue-router";
 import { mockUsers } from "../../data/mockStudents";
+import { userIcon } from "../images/user-solid.svg";
 
 // state
 const activeStudent = inject("activeStudent");
 const activeTab = ref("p1");
 
 const tabs = [
-  { id: "p1", label: "中学一年生" },
-  { id: "p2", label: "中学二年生" },
-  { id: "p3", label: "中学三年生" },
-  { id: "p4", label: "高校一年生" },
-  { id: "p5", label: "高校二年生" },
-  { id: "p6", label: "高校三年生" },
+  { id: "p1", label: "中一" },
+  { id: "p2", label: "中二" },
+  { id: "p3", label: "中三" },
+  { id: "p4", label: "高一" },
+  { id: "p5", label: "高二" },
+  { id: "p6", label: "高三" },
 ];
-
-const tabLabel = ["中一", "中二", "中三", "高一", "高二", "高三"]
 
 const router = useRouter();
 const handleSelectStudent = (student) => {
@@ -45,16 +44,6 @@ const handleSelectStudent = (student) => {
         >
       </li>
     </ul>
-    <ul class="tabs">
-      <li v-for="tab in tabLabel" :key="tab.id">
-        <a
-          href="#"
-          :class="{ active: activeTab === tab.id }"
-          @click.prevent="activeTab = tab.id"
-          >{{ tab }}</a
-        >
-      </li>
-    </ul>
 
     <section
       v-for="tab in tabs"
@@ -62,15 +51,18 @@ const handleSelectStudent = (student) => {
       :id="tab.id"
       class="content"
       v-show="activeTab === tab.id"
-    >
+    > <img src="userIcon" class="student-icon"></img>
       <div
         v-for="student in mockUsers[tab.label]"
-        class="student-name"
+        class="student"
         @click="handleSelectStudent(student)"
         style="cursor: pointer; text-decoration: underline"
-      >
-        <div>{{ student.name }}</div>
-        <div v-for="subject in student.subject">{{ subject }}</div>
+      > <img src="userIcon" class="student-icon">
+        <div class="student-name">{{ student.name }}</div>
+        <span 
+          v-for="subject in student.subject"
+          class="subject-name"
+        >{{ subject }}</span>
       </div>
     </section>
   </div>
@@ -115,9 +107,18 @@ const handleSelectStudent = (student) => {
 }
 
 .content {
-  padding: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+.student {
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+}
+
+.student-icon {
+  margin:2px;
+  width: 20px;
 }
 
 .student-name:hover {
