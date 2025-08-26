@@ -8,12 +8,12 @@ const activeStudent = inject("activeStudent");
 const activeTab = ref("p1");
 
 const tabs = [
-  { id: "p1", label: "中学一年生" },
-  { id: "p2", label: "中学二年生" },
-  { id: "p3", label: "中学三年生" },
-  { id: "p4", label: "高校一年生" },
-  { id: "p5", label: "高校二年生" },
-  { id: "p6", label: "高校三年生" },
+  { id: "p1", label: "中一" },
+  { id: "p2", label: "中二" },
+  { id: "p3", label: "中三" },
+  { id: "p4", label: "高一" },
+  { id: "p5", label: "高二" },
+  { id: "p6", label: "高三" },
 ];
 
 const router = useRouter();
@@ -24,6 +24,15 @@ const handleSelectStudent = (student) => {
 </script>
 
 <template>
+<div class="mybody">
+  <div class="head">
+    <span style="font-size: 32px;">生徒一覧</span>
+    <router-link to="/" class="link">
+      <button type="button" class="button-normal button-exit">
+        ログアウト
+      </button>
+    </router-link>
+  </div>
   <div class="container">
     <ul class="tabs">
       <li v-for="tab in tabs" :key="tab.id">
@@ -42,27 +51,51 @@ const handleSelectStudent = (student) => {
       :id="tab.id"
       class="content"
       v-show="activeTab === tab.id"
-    >
+    > 
       <div
         v-for="student in mockUsers[tab.label]"
-        class="student-name"
+        class="student"
         @click="handleSelectStudent(student)"
-        style="cursor: pointer; text-decoration: underline"
-      >
-        <div>{{ student.name }}</div>
-        <div v-for="subject in student.subject">{{ subject }}</div>
+        style="cursor: pointer;"
+      > 
+        <div class="student-row">
+          <img src="../images/user-solid.svg" class="student-icon">
+          <div class="student-column">
+            <span class="student-name">{{ student.name }}</span>
+            <div>
+              <span 
+                v-for="subject in student.subject"
+                class="subject-name"
+              >{{ subject }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
-
-    <router-link to="/" class="link">
-      <button type="button" class="button-normal button-exit">
-        ログアウト
-      </button>
-    </router-link>
   </div>
+</div>
 </template>
 
 <style scoped>
+.mybody {
+  padding: 2em;
+  background-color: #ffffff;
+}
+
+.head {
+  position: relative
+}
+.button-exit{
+  padding: 2% 3.5%;
+  border-radius:10px;
+  background: #f48356;
+  color: #fff;
+  font-weight: 700;
+  font-size: 95%;
+  position: absolute;
+  right: 0;
+}
+
 .tabs {
   display: flex;
   list-style: none;
@@ -81,18 +114,50 @@ const handleSelectStudent = (student) => {
 }
 
 .tabs li a.active {
-  background-color: #007bff;
+  background-color: orange;
   color: white;
-  border-color: #007bff;
+  border-color: orange;
 }
 
 .content {
-  padding: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-.student-name:hover {
-  color: #007bff;
+.student {
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+}
+
+.student:last-child {
+  border-bottom: none;
+}
+
+.student:hover {
+  background-color: #ffa60060;
+}
+
+.student-row {
+  display: flex;
+  align-items: center;
+  gap: 3%;
+}
+
+.student-column {
+  display: flex;
+  flex-direction: column;
+  gap:2%;
+}
+
+.student-icon {
+  margin:2px;
+  width: 20px;
+}
+
+.subject-name {
+  margin-left: 5px;
+  background-color:#ddd;
+  border-radius: 10%;
+  padding: 3px;
 }
 </style>
