@@ -1,5 +1,7 @@
+import { mockChat } from "../data/mockChat";
+
 // チャットの内容を辞書形式で保存
-const chatDict = require("./DemoData_chat.json");
+const chatDict = mockChat;
 
 const getKey = (data) => `${data.studentName}-${data.subject}`;
 
