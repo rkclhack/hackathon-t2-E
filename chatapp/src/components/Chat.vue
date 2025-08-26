@@ -3,8 +3,8 @@ import { inject, ref, reactive, onMounted } from "vue";
 import socketManager from "../socketManager.js";
 
 // state
-const userName = inject("userName") || "userName";
-const studentName = ref("山田太郎");
+const teacherName = inject("teacherName");
+const studentName = inject("studentName");
 const subject = ref("数学");
 const chatContent = ref("");
 const chatList = reactive([]);
@@ -59,43 +59,33 @@ const handleChangeSubject = (newSubject) => {
 
 <template>
   <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">Vue.js Chat チャットルーム</h1>
-    <div class="mt-10">
-      <p>ログインユーザ：{{ userName }}さん</p>
+    <h1 class="text-h3 font-weight-medium">{{ studentName }} さんのチャット</h1>
+    <div class="mt-2">
+      <p>ログインユーザ：{{ teacherName }}さん</p>
+
+      <!-- ▼ チャットログを上に配置 ▼ -->
+      <div class="chat-container mt-3" v-if="chatList.length">
+        <div class="scroll-region">
+          <ul>
+            <li class="item mt-2" v-for="(chat, i) in chatList" :key="i">
+              {{ chat }}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ▼ 入力欄と操作ボタン ▼ -->
       <textarea
         v-model="chatContent"
-        variant="outlined"
         placeholder="投稿文を入力してください"
         rows="4"
         class="area"
       ></textarea>
-      <div class="mt-5">
-        <button
-          class="button-normal mr-2"
-          :class="{ action: subject === '数学' }"
-          @click="handleChangeSubject('数学')"
-        >
-          数学
-        </button>
-        <button
-          class="button-normal"
-          :class="{ action: subject === '国語' }"
-          @click="handleChangeSubject('国語')"
-        >
-          国語
-        </button>
-      </div>
-      <div class="mt-5">
+      <div class="mt-2">
         <button class="button-normal" @click="handleSendChat">投稿</button>
       </div>
-      <div class="mt-5" v-if="chatList.length !== 0">
-        <ul>
-          <li class="item mt-4" v-for="(chat, i) in chatList" :key="i">
-            {{ `${chat.name}: ${chat.content}` }}
-          </li>
-        </ul>
-      </div>
     </div>
+
     <router-link to="/" class="link">
       <button
         type="button"
@@ -114,7 +104,7 @@ const handleChangeSubject = (newSubject) => {
 }
 
 .area {
-  width: 500px;
+  width: 80vw;
   border: 1px solid #000;
   margin-top: 8px;
 }
@@ -132,7 +122,16 @@ const handleChangeSubject = (newSubject) => {
   margin-top: 8px;
 }
 
-.action {
-  border: 2px solid blue;
+/* ▼ チャットログ領域を固定してスクロール可能にする ▼ */
+.chat-container {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-height: 200px;
+}
+
+.scroll-region {
+  max-height: 300px; /* ログの高さを制限 */
+  overflow-y: auto; /* 縦スクロール有効 */
+  padding: 0.5rem;
 }
 </style>
