@@ -24,6 +24,7 @@ const handleSelectStudent = (student) => {
 </script>
 
 <template>
+<div class="mybody">
   <div class="head">
     <span style="font-size: 32px;">生徒一覧</span>
     <router-link to="/" class="link">
@@ -72,9 +73,15 @@ const handleSelectStudent = (student) => {
       </div>
     </section>
   </div>
+</div>
 </template>
 
 <style scoped>
+.mybody {
+  padding: 2em;
+  background-color: #ffffff;
+}
+
 .head {
   position: relative
 }
