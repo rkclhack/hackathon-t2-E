@@ -51,13 +51,13 @@ const handleSelectStudent = (student) => {
       :id="tab.id"
       class="content"
       v-show="activeTab === tab.id"
-    > <img src="userIcon" class="student-icon"></img>
+    > 
       <div
         v-for="student in mockUsers[tab.label]"
         class="student"
         @click="handleSelectStudent(student)"
         style="cursor: pointer; text-decoration: underline"
-      > <img src="userIcon" class="student-icon">
+      > <img :src="userIcon" class="student-icon">
         <div class="student-name">{{ student.name }}</div>
         <span 
           v-for="subject in student.subject"
