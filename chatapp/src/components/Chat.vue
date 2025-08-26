@@ -41,7 +41,7 @@ const onExit = () => {
 const onMemo = () => {
   if (!chatContent.value) return
   // メモの内容を表示
-  chatList.unshift(`${username.value} さんのメモ: ${chatContent.value}`)
+  chatList.push(`${username.value} さんのメモ: ${chatContent.value}`)
   // 入力欄を初期化
   chatContent.value = ""
 }
@@ -50,17 +50,17 @@ const onMemo = () => {
 // #region socket event handler
 // サーバから受信した入室メッセージ画面上に表示する
 const onReceiveEnter = (data) => {
-  chatList.unshift(`${data.name} さんが入室しました`)
+  chatList.push(`${data.name} さんが入室しました`)
 }
 
 // サーバから受信した退室メッセージを受け取り画面上に表示する
 const onReceiveExit = (data) => {
-  chatList.unshift(`${data.name} さんが退室しました`)
+  chatList.push(`${data.name} さんが退室しました`)
 }
 
 // サーバから受信した投稿メッセージを画面上に表示する
 const onReceivePublish = (data) => {
-  chatList.unshift(`${data.name} さん : ${data.content}`)
+  chatList.push(`${data.name} さん : ${data.content}`)
 }
 // #endregion
 
@@ -79,35 +79,67 @@ const registerSocketEvent = () => {
 
 <template>
   <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">{{ username }} さんのチャット</h1>
+    <h1 class="text-h3 font-weight-medium">{{ stuName }}</h1>
+    <router-link to="/student_list" class="link">
+      <button type="button" class="button-normal button-exit" @click="onExit">生徒一覧へ</button>
+    </router-link>
     <div class="mt-10">
       <p>ログインユーザ：{{ username }}さん</p>
-      <textarea
-        v-model="chatContent"
-        placeholder="投稿文を入力してください"
-        rows="4"
-        class="area"
-      ></textarea>      
+      <div class="mt-5 chat-container">
+        <v-virtual-scroll
+          v-if="chatList.length !== 0"
+          :items="chatList"
+          item-height="50"
+          class="scroll-region"
+  >
+          <template v-slot:default="{ item, index }">
+            <li class="item mt-4" :key="index">{{ item }}</li>
+          </template>
+        </v-virtual-scroll>
+      </div>
+
+      <textarea v-model="chatContent" variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area"></textarea>
       <div class="mt-5">
         <button class="button-normal" @click="onPublish">投稿</button>
         <button class="button-normal util-ml-8px" @click="onMemo">メモ</button>
       </div>
-      <div class="mt-5" v-if="chatList.length">
-        <ul>
-          <li class="item mt-4" v-for="(chat, i) in chatList" :key="i">{{ chat }}</li>
-        </ul>
-      </div>
     </div>
-    <router-link to="/" class="link">
-      <button type="button" class="button-normal button-exit" @click="onExit">退室する</button>
-    </router-link>
   </div>
 </template>
 
 <style scoped>
-.link { text-decoration: none; }
-.area { width: 500px; border: 1px solid #000; margin-top: 8px; }
-.item { display: block; }
-.util-ml-8px { margin-left: 8px; }
-.button-exit { color: #000; margin-top: 8px; }
+.link {
+  text-decoration: none;
+}
+
+.area {
+  width: 80vw;
+  border: 1px solid #000;
+  margin-top: 8px;
+}
+
+.item {
+  display: block;
+}
+
+.util-ml-8px {
+  margin-left: 8px;
+}
+
+.button-exit {
+  color: #000;
+  margin-top: 8px;
+}
+
+.chat-container {
+  min-height: 300px; /* 空でも枠を確保 */
+}
+
+.scroll-region {
+  max-height: 300px; /* スクロール制限 */
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+
 </style>
