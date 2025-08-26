@@ -42,6 +42,7 @@ onMounted(() => {
 
 // methods
 const handleSendChat = () => {
+  if (!chatContent.value.trim()) return;
   socket.emit("sendChatEvent", {
     userName: teacherName.value,
     studentName: activeStudent.name,
