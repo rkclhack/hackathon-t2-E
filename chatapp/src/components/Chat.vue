@@ -135,10 +135,6 @@ button {
   color: black;
 }
 
-button:hover {
-  filter: brightness(0.8);
-}
-
 .container {
   display: flex;
   flex-direction: column;
