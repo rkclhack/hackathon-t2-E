@@ -133,10 +133,6 @@ const handleSelectStudent = (student) => {
   border-bottom: none;
 }
 
-.student:hover {
-  background-color: #ffa60060;
-}
-
 .student-row {
   display: flex;
   align-items: center;

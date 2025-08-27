@@ -82,7 +82,7 @@ const handleChangeSubject = (newSubject) => {
 
         <router-link to="/student_list" class="link">
           <button type="button" class="back-button" @click="handleExitRoom">
-            生徒一覧へ戻る
+            生徒一覧へ
           </button>
         </router-link>
       </div>
@@ -119,7 +119,7 @@ const handleChangeSubject = (newSubject) => {
       <textarea
         v-model="chatContent"
         placeholder="記録・引き継ぎ内容を入力してください"
-        rows="2"
+        rows="3"
         class="text-input"
       ></textarea>
       <button class="send-button" @click="handleSendChat">投稿</button>
@@ -134,6 +134,10 @@ button {
   border-radius: 8px;
   background-color: #eee;
   color: black;
+}
+
+.back-button {
+  font-size:0.8rem ;
 }
 
 .container {
@@ -157,7 +161,7 @@ button {
 }
 
 .header-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
   flex: 1;
   white-space: nowrap;
